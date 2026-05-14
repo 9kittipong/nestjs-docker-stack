@@ -6,7 +6,12 @@ services:
       dockerfile: docker/api/Dockerfile
     container_name: my-nest-api-standalone
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/my_nest_api

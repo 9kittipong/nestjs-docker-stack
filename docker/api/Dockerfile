@@ -8,6 +8,14 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
+# ---- Development Stage ----
+FROM build AS development
+WORKDIR /usr/src/app
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]
+
 # ---- Production Stage ----
 FROM node:20-alpine AS production
 WORKDIR /usr/src/app

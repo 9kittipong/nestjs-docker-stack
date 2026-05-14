@@ -90,3 +90,14 @@ docker compose -f docker/api/docker-compose.yml up -d
 ### Environment Variables
 - **API**: `DATABASE_URL` (connection string, takes precedence) or individual `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 - **DB**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` (all have defaults)
+
+### Resource Limits
+All containers capped via `deploy.resources.limits`:
+- **CPU**: 2 cores (max)
+- **RAM**: 2 GB (max)
+
+### DB Volume
+All compose files mount the same host path for data persistence:
+```
+C:\data\pgdata:/var/lib/postgresql/data
+```

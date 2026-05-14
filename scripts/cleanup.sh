@@ -52,8 +52,9 @@ case "$MODE" in
     docker rmi my-nest-api:latest 2>/dev/null || true
     echo "Removing DB image..."
     docker rmi my-nest-api-db:latest 2>/dev/null || true
-    echo "Running docker system prune --volumes -a..."
-    docker system prune --volumes -a -f
+    echo "Pruning unused volumes and build cache..."
+    docker volume prune -f
+    docker builder prune -f
     echo "Nuke complete. Run 'docker compose up -d' to rebuild from scratch."
     ;;
 

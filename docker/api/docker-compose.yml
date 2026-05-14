@@ -1,5 +1,6 @@
 services:
   api:
+    image: my-nest-api:latest
     build:
       context: ../..
       dockerfile: docker/api/Dockerfile

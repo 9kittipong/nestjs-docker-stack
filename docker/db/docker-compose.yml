@@ -1,5 +1,6 @@
 services:
   db:
+    image: my-nest-api-db:latest
     build:
       context: .
       dockerfile: Dockerfile

@@ -3,7 +3,7 @@
 ## Stack
 - NestJS v11 + TypeScript (`module: "nodenext"` in tsconfig)
 - PostgreSQL 16 + Drizzle ORM (`drizzle-orm` + `drizzle-kit`)
-- Docker (node:20-alpine, postgres:16-alpine via docker-compose)
+- Docker (multi-stage builds via `docker/api/Dockerfile` and `docker/db/Dockerfile`)
 
 ## Commands
 | Command | What |
@@ -32,7 +32,8 @@ Lint before test is a good habit. There is no dedicated `typecheck` script.
 
 ## DB Setup
 - `.env` is gitignored — copy from `.env` example or create one locally
-- Start DB: `docker compose up -d db`
+- Start DB: `docker compose up -d db` (builds from `docker/db/Dockerfile`)
+- Start full stack: `docker compose up -d`
 - After schema changes: `npm run db:generate` then `npm run db:push`
 - Migration files in `drizzle/` — gitignored
 
@@ -45,3 +46,47 @@ Lint before test is a good habit. There is no dedicated `typecheck` script.
 - ESLint flat config (`eslint.config.mjs`) with `@typescript-eslint/recommended-type-checked`
 - `noImplicitAny: false` in tsconfig, `@typescript-eslint/no-explicit-any` off
 - Prettier rule in ESLint sets `endOfLine: "auto"` (avoids CRLF issues on Windows)
+
+## Docker Images
+
+### File Structure
+```
+docker/
+├── api/
+│   ├── Dockerfile              # Multi-stage: build → production
+│   └── docker-compose.yml      # Standalone API (needs external DB)
+├── db/
+│   ├── Dockerfile              # Wraps postgres:16-alpine with credentials
+│   ├── docker-compose.yml      # Standalone DB
+│   └── init/                   # Optional SQL init scripts
+```
+
+### Building Individually
+```bash
+# API image
+IMAGE_NAME=my-nest-api TAG=latest bash scripts/build-api.sh
+
+# DB image
+IMAGE_NAME=my-nest-api-db TAG=latest bash scripts/build-db.sh
+```
+
+### Running with docker-compose (dev)
+```bash
+# Full stack
+docker compose up -d
+
+# DB only (API connects to external DB)
+docker compose -f docker/db/docker-compose.yml up -d
+
+# API only (needs DATABASE_URL set or DB running)
+docker compose -f docker/api/docker-compose.yml up -d
+```
+
+### Startup Order
+1. Start DB first: `docker compose up -d db` or `docker compose -f docker/db/docker-compose.yml up -d`
+2. Wait for healthcheck to pass
+3. Start API: `docker compose up -d api` or `docker compose -f docker/api/docker-compose.yml up -d`
+
+### Environment Variables
+- **API**: `DATABASE_URL` (connection string, takes precedence) or individual `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
+- **DB**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` (all have defaults)

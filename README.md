@@ -13,7 +13,16 @@ docker compose up -d
 
 npm run db:push   # push schema to DB
 npm run db:seed   # seed sample users (skips if data exists)
+
+# verify data
 curl http://localhost:3000/users
+
+# to stop docker container
+docker compose down
+
+# to start docker container again 
+docker compose up -d # prod
+docker compose up -d --build # dev
 ```
 
 > After reboot: `docker compose up -d` — data is persisted in volumes.

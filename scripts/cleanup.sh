@@ -8,7 +8,7 @@ COMPOSE_FILE=""
 while getopts "f:" opt; do
   case $opt in
     f) COMPOSE_FILE="-f $OPTARG" ;;
-    *) echo "Usage: $0 [stop|reset|nuke] [-f <compose-file>]"; exit 1 ;;
+    *) echo "Usage: $0 [start|stop|reset|nuke] [-f <compose-file>]"; exit 1 ;;
   esac
 done
 
@@ -29,6 +29,12 @@ echo "Mode: $MODE"
 [ -n "$COMPOSE_FILE" ] && echo "Compose file: $COMPOSE_FILE"
 
 case "$MODE" in
+  start)
+    echo "Starting containers..."
+    compose_cmd up -d
+    echo "Containers started."
+    ;;
+
   stop)
     echo "Stopping containers..."
     compose_cmd down
@@ -60,7 +66,7 @@ case "$MODE" in
 
   *)
     echo "Unknown mode: $MODE"
-    echo "Usage: $0 [stop|reset|nuke] [-f <compose-file>]"
+    echo "Usage: $0 [start|stop|reset|nuke] [-f <compose-file>]"
     exit 1
     ;;
 esac

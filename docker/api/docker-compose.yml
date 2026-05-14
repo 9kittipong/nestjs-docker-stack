@@ -8,4 +8,4 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/my_nest_api
+      DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/my_nest_api

@@ -4,45 +4,51 @@ NestJS API + PostgreSQL 16 + Drizzle ORM, containerized with Docker.
 
 ## Quick Start (Recommended)
 
+**Windows 11:**
 ```bash
-# Development — hot-reload on src/ changes
-docker compose up -d --build
+docker compose up -d --build       # dev — hot-reload on src/ changes
+docker compose up -d               # prod — baked-in build
 
-# Production — baked-in build
-docker compose up -d
+npm run db:push                    # push schema to DB
+npm run db:seed                    # seed sample users (skips if data exists)
 
-npm run db:push   # push schema to DB
-npm run db:seed   # seed sample users (skips if data exists)
-
-# verify data
 curl http://localhost:3000/users
-
-# to stop docker container
-docker compose down
-
-# to start docker container again 
-docker compose up -d # prod
-docker compose up -d --build # dev
 ```
 
-> After reboot: `docker compose up -d` — data is persisted in volumes.
+**macOS:**
+```bash
+docker compose -f docker-compose.mac.yml up -d --build # dev — hot-reload on src/ changes
+docker compose -f docker-compose.mac.yml up -d         # prod — baked-in build
+
+npm run db:push
+npm run db:seed
+
+curl http://localhost:3000/users
+```
 
 ## Alternative: Build & Run Individually
 
-Build both images, then start DB → API in sequence.
-
+**Windows 11:**
 ```bash
-# 1. Build the images
-bash scripts/build-db.sh
-bash scripts/build-api.sh
+scripts\win\build-db.bat
+scripts\win\build-api.bat
 
-# 2. Start DB and wait for healthcheck
 docker compose -f docker/db/docker-compose.yml up -d
-
-# 3. Start API
 docker compose -f docker/api/docker-compose.yml up -d
 
-# 4. Push schema & seed data
+npm run db:push
+npm run db:seed
+curl http://localhost:3000/users
+```
+
+**macOS:**
+```bash
+bash scripts/mac/build-db.sh
+bash scripts/mac/build-api.sh
+
+docker compose -f docker/db/docker-compose.mac.yml up -d
+docker compose -f docker/api/docker-compose.mac.yml up -d
+
 npm run db:push
 npm run db:seed
 curl http://localhost:3000/users
@@ -61,8 +67,16 @@ npm run db:seed              # seed users table with sample data
 
 ## Cleanup
 
+**Windows 11:**
 ```bash
-bash scripts/cleanup.sh stop    # stop containers only
-bash scripts/cleanup.sh reset   # stop + remove volumes + remove images
-bash scripts/cleanup.sh nuke    # reset + prune dangling volumes and build cache
+scripts\win\cleanup.bat stop    # stop containers only
+scripts\win\cleanup.bat reset   # stop + remove volumes + remove images
+scripts\win\cleanup.bat nuke    # reset + prune dangling volumes and build cache
+```
+
+**macOS:**
+```bash
+bash scripts/mac/cleanup.sh stop    # stop containers only
+bash scripts/mac/cleanup.sh reset   # stop + remove volumes + remove images
+bash scripts/mac/cleanup.sh nuke    # reset + prune dangling volumes and build cache
 ```

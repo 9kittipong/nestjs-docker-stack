@@ -23,7 +23,9 @@ async function seed() {
 
   const existing = await db.select().from(users);
   if (existing.length > 0) {
-    console.log(`Users table already has ${existing.length} rows — skipping seed`);
+    console.log(
+      `Users table already has ${existing.length} rows — skipping seed`,
+    );
     await pool.end();
     return;
   }

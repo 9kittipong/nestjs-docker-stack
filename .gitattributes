@@ -1,0 +1,24 @@
+# Normalize line endings
+* text=auto
+
+# Shell scripts must always use LF
+scripts/**/*.sh text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Dockerfiles
+Dockerfile* text eol=lf
+*.dockerfile text eol=lf
+
+# Compose files
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Markdown
+*.md text eol=lf
+
+# TypeScript / JS
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.json text eol=lf

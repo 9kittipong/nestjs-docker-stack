@@ -1,0 +1,53 @@
+services:
+  db:
+    image: my-nest-api-db:latest
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    container_name: my-nest-api-db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: my_nest_api
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: my-nest-api:latest
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      target: development
+    container_name: my-nest-api
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/usr/src/app/src
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/my_nest_api
+      NODE_ENV: development
+
+volumes:
+  pgdata:

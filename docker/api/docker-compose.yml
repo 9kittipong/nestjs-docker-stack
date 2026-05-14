@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: docker/api/Dockerfile
+    container_name: my-nest-api-standalone
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/my_nest_api

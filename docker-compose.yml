@@ -1,6 +1,8 @@
 services:
   db:
-    image: postgres:16-alpine
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
     container_name: my-nest-api-db
     restart: unless-stopped
     ports:
@@ -18,7 +20,9 @@ services:
       retries: 5
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
     container_name: my-nest-api
     restart: unless-stopped
     ports:
@@ -27,11 +31,6 @@ services:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: my_nest_api
       DATABASE_URL: postgresql://postgres:postgres@db:5432/my_nest_api
 
 volumes:

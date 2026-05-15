@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "XXX Hello World!"', () => {
-      expect(appController.getHello()).toBe('XXX Hello World!');
+    it('should return health status', () => {
+      const result = appController.getHealth();
+      expect(result.status).toBe('ok');
+      expect(result).toHaveProperty('timestamp');
     });
   });
 });

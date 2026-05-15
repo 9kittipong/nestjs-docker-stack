@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger, VersioningType } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { ClassSerializerInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
@@ -30,11 +30,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1',
-  });
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -52,44 +47,42 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
-  if (process.env.NODE_ENV !== 'production') {
-    const config = new DocumentBuilder()
-      .setTitle('My Nest API')
-      .setDescription('RESTful API built with NestJS, Prisma, and PostgreSQL')
-      .setVersion('1.0')
-      .setContact('API Support', '', 'support@example.com')
-      .setLicense('UNLICENSED', '')
-      .addBearerAuth(
-        {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          name: 'JWT',
-          description: 'Enter JWT token',
-          in: 'header',
-        },
-        'JWT-auth',
-      )
-      .addTag('Health', 'Health check endpoints')
-      .addTag('Users', 'User management endpoints')
-      .build();
-
-    const document = SwaggerModule.createDocument(app, config);
-
-    const customOptions: SwaggerCustomOptions = {
-      swaggerOptions: {
-        persistAuthorization: true,
-        tagsSorter: 'alpha',
-        operationsSorter: 'alpha',
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('My Nest API')
+    .setDescription('RESTful API built with NestJS, Prisma, and PostgreSQL')
+    .setVersion('1.0')
+    .setContact('API Support', '', 'support@example.com')
+    .setLicense('UNLICENSED', '')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
       },
-      customSiteTitle: 'My Nest API - Swagger',
-    };
+      'JWT-auth',
+    )
+    .addTag('Health', 'Health check endpoints')
+    .addTag('Users', 'User management endpoints')
+    .build();
 
-    SwaggerModule.setup('api', app, document, customOptions);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-    logger.log('Swagger UI available at: http://localhost:3000/api');
-    logger.log('OpenAPI JSON available at: http://localhost:3000/api-json');
-  }
+  const swaggerOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+    customSiteTitle: 'My Nest API - Swagger',
+  };
+
+  SwaggerModule.setup('api', app, document, swaggerOptions);
+
+  logger.log('Swagger UI available at: http://localhost:3000/api');
+  logger.log('OpenAPI JSON available at: http://localhost:3000/api-json');
 
   process.on('unhandledRejection', (reason) => {
     logger.error(

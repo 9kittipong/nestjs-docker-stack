@@ -4,7 +4,10 @@ import { PrismaClient } from '@prisma/client';
 export const PRISMA = Symbol('PRISMA');
 
 @Injectable()
-export class PrismaProvider extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaProvider
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor() {
     super({});
   }

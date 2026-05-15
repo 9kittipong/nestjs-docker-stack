@@ -17,7 +17,7 @@ docker build -t my-nest-api:latest -f docker/api/Dockerfile .
 docker save -o my-nest-api.tar my-nest-api:latest
 
 # DB image
-docker build -t my-nest-api-db:latest -f docker/db/Dockerfile docker/db
+docker build -t my-nest-api-db:latest -f docker/db/Dockerfile .
 docker save -o my-nest-api-db.tar my-nest-api-db:latest
 ```
 

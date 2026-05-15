@@ -17,11 +17,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: my_nest_api
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/my_nest_api?host=/var/run/postgresql
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
+
+volumes:
+  pgdata:
 
   api:
     image: my-nest-api:latest

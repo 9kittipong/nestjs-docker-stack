@@ -1,10 +1,11 @@
-FROM postgres:16-alpine
+FROM postgres:18-alpine
 
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=postgres
 ENV POSTGRES_DB=my_nest_api
 
-RUN apk add --no-cache nodejs npm
+# Add libc6-compat and openssl for Prisma compatibility
+RUN apk add --no-cache nodejs npm libc6-compat openssl
 
 WORKDIR /prisma
 COPY prisma/schema.prisma ./

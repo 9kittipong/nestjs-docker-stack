@@ -12,13 +12,14 @@
 Run these from the **project root**:
 
 ```bash
-# API image
+# DB image : Step 1
+docker build -t my-nest-api-db:latest -f docker/db/Dockerfile .
+docker save -o my-nest-api-db.tar my-nest-api-db:latest
+
+# API image : Step 2
 docker build -t my-nest-api:latest -f docker/api/Dockerfile .
 docker save -o my-nest-api.tar my-nest-api:latest
 
-# DB image
-docker build -t my-nest-api-db:latest -f docker/db/Dockerfile .
-docker save -o my-nest-api-db.tar my-nest-api-db:latest
 ```
 
 Output: `my-nest-api.tar` and `my-nest-api-db.tar` in the project root.
@@ -29,7 +30,7 @@ Output: `my-nest-api.tar` and `my-nest-api-db.tar` in the project root.
 
 Copy the `.tar` files to the target machine, then follow below.
 
-### Windows (cmd.exe)
+### Windows (cmd.exe not powershell)
 
 ```batch
 docker load -i my-nest-api-db.tar
@@ -41,7 +42,8 @@ docker run -d ^
   --cpus 2 --memory 2g ^
   -p 5432:5432 ^
   -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=my_nest_api ^
-  -v "C:\data\pgdata:/var/lib/postgresql/data" ^
+  -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/my_nest_api?host=/var/run/postgresql ^
+  -v "pgdata:/var/lib/postgresql/data" ^
   my-nest-api-db:latest
 
 docker run -d ^
@@ -66,6 +68,7 @@ docker run -d \
   --cpus 2 --memory 2g \
   -p 5432:5432 \
   -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=my_nest_api \
+  -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/my_nest_api?host=/var/run/postgresql \
   -v pgdata:/var/lib/postgresql/data \
   my-nest-api-db:latest
 

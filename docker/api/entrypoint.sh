@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Running database migrations..."
-npx prisma migrate deploy
+echo "Running database schema push..."
+npx prisma db push
 
 echo "Starting application..."
 exec "$@"

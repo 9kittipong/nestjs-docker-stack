@@ -2,7 +2,7 @@
 
 ## Stack
 - NestJS v11 + TypeScript (`module: "nodenext"` in tsconfig)
-- PostgreSQL 16 + Drizzle ORM (`drizzle-orm` + `drizzle-kit`)
+- PostgreSQL 16 + Prisma ORM (`prisma` + `@prisma/client`)
 - Docker (multi-stage builds via `docker/api/Dockerfile` and `docker/db/Dockerfile`)
 
 ## Commands
@@ -15,27 +15,28 @@
 | `npm run test` | unit tests — `*.spec.ts` in `src/`, jest config inline in package.json |
 | `npm run test:e2e` | e2e tests — `*.e2e-spec.ts` in `test/`, config at `test/jest-e2e.json` |
 | `npm run test:cov` | unit + coverage |
-| `npm run db:generate` | `drizzle-kit generate` — creates SQL from schema |
-| `npm run db:push` | `drizzle-kit push` — pushes schema to DB |
-| `npm run db:migrate` | **same as push** (not `drizzle-kit migrate`) |
+| `npm run db:generate` | `prisma generate` — generates Prisma Client |
+| `npm run db:push` | `prisma db push` — pushes schema to DB without migration |
+| `npm run db:migrate` | `prisma migrate dev` — creates and applies migration |
+| `npm run db:seed` | `ts-node prisma/seed.ts` — seeds database with sample data |
 
 Lint before test is a good habit. There is no dedicated `typecheck` script.
 
 ## Architecture
 - `AppModule` imports `ConfigModule.forRoot({ isGlobal: true })`, `DatabaseModule` (global), `UsersModule`
-- Database accessed via custom `DRIZZLE` injection symbol (`Symbol('DRIZZLE')` from `src/database/database.provider.ts`)
+- Database accessed via custom `PRISMA` injection symbol (`Symbol('PRISMA')` from `src/database/prisma.provider.ts`)
 - `DatabaseModule` is `@Global()` — no need to re-import in feature modules
 - DB config accepts `DATABASE_URL` or individual `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 - DTO validation uses `class-validator` + `class-transformer`; `ValidationPipe({ whitelist: true })` in `main.ts`
 - `UsersModule` (controller + service + DTOs) is the reference pattern for new feature modules
-- Drizzle schema in `src/database/schema/` — add new tables there and re-export from `index.ts`
+- Prisma schema in `prisma/schema.prisma` — add new models there
 
 ## DB Setup
 - `.env` is gitignored — copy from `.env` example or create one locally
 - Start DB (Win): `docker compose up -d db` | (macOS): `docker compose -f docker-compose.mac.yml up -d db`
 - Start full stack (Win): `docker compose up -d` | (macOS): `docker compose -f docker-compose.mac.yml up -d`
-- After schema changes: `npm run db:generate` then `npm run db:push`
-- Migration files in `drizzle/` — gitignored
+- After schema changes: `npm run db:migrate` (creates and applies migration)
+- Migration files in `prisma/migrations/` — gitignored
 
 ## Testing quirks
 - E2E tests compile their own `NestApplication` via `@nestjs/testing` — no external server needed

@@ -13,11 +13,11 @@ Run these from the **project root**:
 
 ```bash
 # DB image : Step 1
-docker build -t my-nest-api-db:latest -f docker/db/Dockerfile .
+docker build --no-cache -t my-nest-api-db:latest -f docker/db/Dockerfile .
 docker save -o my-nest-api-db.tar my-nest-api-db:latest
 
 # API image : Step 2
-docker build -t my-nest-api:latest -f docker/api/Dockerfile .
+docker build --no-cache -t my-nest-api:latest -f docker/api/Dockerfile .
 docker save -o my-nest-api.tar my-nest-api:latest
 
 ```

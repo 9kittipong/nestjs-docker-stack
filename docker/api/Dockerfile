@@ -1,5 +1,5 @@
 # ---- Build Stage ----
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /usr/src/app
 
 COPY package*.json ./
@@ -22,9 +22,12 @@ FROM node:20-alpine AS production
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY prisma.config.ts ./
+COPY prisma/ ./prisma/
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=build /usr/src/app/dist ./dist
+RUN npx prisma generate
 
 EXPOSE 3000
 

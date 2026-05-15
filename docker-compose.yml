@@ -26,9 +26,6 @@ services:
       timeout: 5s
       retries: 5
 
-volumes:
-  pgdata:
-
   api:
     image: my-nest-api:latest
     build:
@@ -51,3 +48,5 @@ volumes:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/my_nest_api
       NODE_ENV: development
 
+volumes:
+  pgdata:

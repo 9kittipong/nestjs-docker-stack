@@ -6,8 +6,8 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npm run build
 RUN npx prisma generate
+RUN npm run build
 
 # ---- Development Stage ----
 FROM build AS development
